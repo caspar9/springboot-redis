@@ -1,11 +1,15 @@
 package com.dyc.api;
 
+import com.dyc.distributedLock.DistributedLock;
+import com.dyc.distributedLock.LockKeys;
 import com.dyc.model.User;
+import com.dyc.service.RedisLock;
 import com.dyc.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 public class UserApi {
@@ -13,6 +17,8 @@ public class UserApi {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private DistributedLock redisDistributedLock;
 
     @GetMapping("/redis")
     public String testRedis() {
@@ -24,19 +30,15 @@ public class UserApi {
         //redisTemplate.opsForValue().set("dyc",user);
         //User u = (User)redisTemplate.opsForValue().get("dyc");
 
-        //System.out.println(redisTemplate.delete("lock"));
-
-        if(redisService.lock("lock",5000))
-        {
+        if (redisDistributedLock.lock(LockKeys.MERCHANT_SYNC.name())) {
 
             //todo
             redisService.set("dyc", user);
             User u = redisService.get("dyc", User.class);
 
-
-            redisService.unlock("lock");
+           // System.out.println(redisDistributedLock.releaseLock(lockKey));
             return "ok:" + u.toString();
-        }else{
+        } else {
             return "Faild:未get到锁。";
         }
     }

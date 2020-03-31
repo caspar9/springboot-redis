@@ -1,13 +1,24 @@
 package com.dyc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.connection.ReturnType;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Resource;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,20 +29,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisService {
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     public RedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
-    }
-
-
-    public boolean lock(String lock, long expireTime) {
-        return redisTemplate.opsForValue().setIfAbsent(lock, "LOCKVAUE") && redisTemplate.expire(lock, expireTime, TimeUnit.MILLISECONDS);
-    }
-
-    public boolean unlock(String lock) {
-        return redisTemplate.delete(lock);
     }
 
     /**
