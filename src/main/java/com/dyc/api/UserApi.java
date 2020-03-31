@@ -6,6 +6,7 @@ import com.dyc.model.User;
 import com.dyc.service.RedisLock;
 import com.dyc.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,31 +16,28 @@ import java.util.UUID;
 public class UserApi {
 
     @Autowired
-    private RedisService redisService;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     private DistributedLock redisDistributedLock;
 
     @GetMapping("/redis")
     public String testRedis() {
+        //获取锁
+        if (!redisDistributedLock.lock(LockKeys.MERCHANT_SYNC.name())) {
+            return "Faild:未get到锁。";
+        }
 
+        //todo
         User user = new User();
         user.setName("liubang");
         user.setAge("88");
+        redisTemplate.opsForValue().set("dyc", user);
+        User u = (User) redisTemplate.opsForValue().get("dyc");
 
-        //redisTemplate.opsForValue().set("dyc",user);
-        //User u = (User)redisTemplate.opsForValue().get("dyc");
+        //释放锁
+        redisDistributedLock.releaseLock(LockKeys.MERCHANT_SYNC.name());
 
-        if (redisDistributedLock.lock(LockKeys.MERCHANT_SYNC.name())) {
-
-            //todo
-            redisService.set("dyc", user);
-            User u = redisService.get("dyc", User.class);
-
-           // System.out.println(redisDistributedLock.releaseLock(lockKey));
-            return "ok:" + u.toString();
-        } else {
-            return "Faild:未get到锁。";
-        }
+        return "ok:" + u.toString();
     }
 }

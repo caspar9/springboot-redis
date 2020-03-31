@@ -6,7 +6,7 @@ package com.dyc.distributedLock;
 public abstract class AbstractDistributedLock implements DistributedLock {
 
     //默认超时时间
-    private static final long EXPIRE_MILLIS = 10 * 1000;
+    private static final long EXPIRE_MILLIS = 10 * 60 * 1000;
 
     //默认重试次数
     private static final int RETRY_TIMES = 3;

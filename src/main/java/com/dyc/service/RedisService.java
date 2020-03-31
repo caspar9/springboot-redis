@@ -36,6 +36,11 @@ public class RedisService {
         this.redisTemplate = redisTemplate;
     }
 
+    //如果不存在则set
+    public boolean setIfAbsent(String key, Object value) {
+        return redisTemplate.opsForValue().setIfAbsent(key, value);
+    }
+
     /**
      * 指定缓存失效时间
      *
