@@ -58,6 +58,7 @@ public class RedisDistributedLock extends AbstractDistributedLock {
 
     private boolean setRedis(String key, long expire) {
         try {
+            //value 添加reqeustID
             return redisTemplate.execute((RedisCallback<Boolean>) connection -> connection.set(key.getBytes(), key.getBytes(),
                     Expiration.from(expire, TimeUnit.MILLISECONDS),
                     RedisStringCommands.SetOption.ifAbsent())).booleanValue();
