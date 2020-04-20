@@ -15,27 +15,27 @@ public abstract class AbstractDistributedLock implements DistributedLock {
     private static final long SLEEP_MILLIS = 500;
 
     @Override
-    public boolean lock(String key) {
-        return lock(key, EXPIRE_MILLIS, RETRY_TIMES, SLEEP_MILLIS);
+    public boolean lock(String key, String requestId) {
+        return lock(key, requestId, EXPIRE_MILLIS, RETRY_TIMES, SLEEP_MILLIS);
     }
 
     @Override
-    public boolean lock(String key, int retryTimes) {
-        return lock(key, EXPIRE_MILLIS, retryTimes, SLEEP_MILLIS);
+    public boolean lock(String key, String requestId, int retryTimes) {
+        return lock(key, requestId, EXPIRE_MILLIS, retryTimes, SLEEP_MILLIS);
     }
 
     @Override
-    public boolean lock(String key, int retryTimes, long sleepMillis) {
-        return lock(key, EXPIRE_MILLIS, retryTimes, sleepMillis);
+    public boolean lock(String key, String requestId, int retryTimes, long sleepMillis) {
+        return lock(key, requestId, EXPIRE_MILLIS, retryTimes, sleepMillis);
     }
 
     @Override
-    public boolean lock(String key, long expire) {
-        return lock(key, expire, RETRY_TIMES, SLEEP_MILLIS);
+    public boolean lock(String key, String requestId, long expire) {
+        return lock(key, requestId, expire, RETRY_TIMES, SLEEP_MILLIS);
     }
 
     @Override
-    public boolean lock(String key, long expire, int retryTimes) {
-        return lock(key, expire, retryTimes, SLEEP_MILLIS);
+    public boolean lock(String key, String requestId, long expire, int retryTimes) {
+        return lock(key, requestId, expire, retryTimes, SLEEP_MILLIS);
     }
 }

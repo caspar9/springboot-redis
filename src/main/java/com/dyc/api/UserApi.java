@@ -24,7 +24,8 @@ public class UserApi {
     @GetMapping("/redis")
     public String testRedis() {
         //获取锁
-        if (!redisDistributedLock.lock(LockKeys.MERCHANT_SYNC.name())) {
+        String requestId = UUID.randomUUID().toString();
+        if (!redisDistributedLock.lock(LockKeys.MERCHANT_SYNC.name(), requestId)) {
             return "Faild:未get到锁。";
         }
 
@@ -36,7 +37,7 @@ public class UserApi {
         User u = (User) redisTemplate.opsForValue().get("dyc");
 
         //释放锁
-        redisDistributedLock.releaseLock(LockKeys.MERCHANT_SYNC.name());
+        redisDistributedLock.releaseLock(LockKeys.MERCHANT_SYNC.name(), requestId);
 
         return "ok:" + u.toString();
     }

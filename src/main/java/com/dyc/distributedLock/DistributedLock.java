@@ -5,17 +5,17 @@ package com.dyc.distributedLock;
  */
 public interface DistributedLock {
 
-    boolean lock(String key);
+    boolean lock(String key, String requestId);
 
-    boolean lock(String key, int retryTimes);
+    boolean lock(String key, String requestId, int retryTimes);
 
-    boolean lock(String key, int retryTimes, long sleepMillis);
+    boolean lock(String key, String requestId, int retryTimes, long sleepMillis);
 
-    boolean lock(String key, long expire);
+    boolean lock(String key, String requestId, long expire);
 
-    boolean lock(String key, long expire, int retryTimes);
+    boolean lock(String key, String requestId, long expire, int retryTimes);
 
-    boolean lock(String key, long expire, int retryTimes, long sleepMillis);
+    boolean lock(String key, String requestId, long expire, int retryTimes, long sleepMillis);
 
-    boolean releaseLock(String key);
+    boolean releaseLock(String key, String requestId);
 }

@@ -41,8 +41,8 @@ public class RedisDistributedLock extends AbstractDistributedLock {
     }
 
     @Override
-    public boolean lock(String key, long expire, int retryTimes, long sleepMillis) {
-        boolean result = setRedis(key, expire);
+    public boolean lock(String key, String requestId, long expire, int retryTimes, long sleepMillis) {
+        boolean result = setRedis(key, requestId, expire);
         // 如果获取锁失败，按照传入的重试次数进行重试
         while ((!result) && retryTimes-- > 0) {
             try {
@@ -51,15 +51,15 @@ public class RedisDistributedLock extends AbstractDistributedLock {
             } catch (InterruptedException e) {
                 return false;
             }
-            result = setRedis(key, expire);
+            result = setRedis(key, requestId, expire);
         }
         return result;
     }
 
-    private boolean setRedis(String key, long expire) {
+    private boolean setRedis(String key, String requestId, long expire) {
         try {
             //value 添加reqeustID
-            return redisTemplate.execute((RedisCallback<Boolean>) connection -> connection.set(key.getBytes(), key.getBytes(),
+            return redisTemplate.execute((RedisCallback<Boolean>) connection -> connection.set(key.getBytes(), requestId.getBytes(),
                     Expiration.from(expire, TimeUnit.MILLISECONDS),
                     RedisStringCommands.SetOption.ifAbsent())).booleanValue();
         } catch (Exception e) {
@@ -70,9 +70,9 @@ public class RedisDistributedLock extends AbstractDistributedLock {
 
 
     @Override
-    public boolean releaseLock(String key) {
+    public boolean releaseLock(String key, String requestId) {
         return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
-            Boolean result = connection.eval(UNLOCK_LUA.getBytes(), ReturnType.BOOLEAN, 1, key.getBytes(), key.getBytes());
+            Boolean result = connection.eval(UNLOCK_LUA.getBytes(), ReturnType.BOOLEAN, 1, key.getBytes(), requestId.getBytes());
             return result.booleanValue();
         });
     }
