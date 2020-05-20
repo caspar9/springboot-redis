@@ -15,7 +15,7 @@ public class TestAsyncService implements IAsyncService {
     private TestService testService;
 
     @Override
-    //@Async
+//    @Async
     @Async("asyncTaskExecutor")
     public void asyncTask() {
         long startTime = System.currentTimeMillis();

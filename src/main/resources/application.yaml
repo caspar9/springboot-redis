@@ -1,4 +1,16 @@
 spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/dyc?useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update  #none
+    properties:
+      jadira:
+        usertype:
+          autoRegisterUserTypes: true
   redis:
     host: 127.0.0.1 # Redis服务器地址
     port: 6379 # Redis服务器连接端口

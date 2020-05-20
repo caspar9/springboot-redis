@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class UserApi {
@@ -33,7 +34,7 @@ public class UserApi {
         User user = new User();
         user.setName("liubang");
         user.setAge("88");
-        redisTemplate.opsForValue().set("dyc", user);
+        redisTemplate.opsForValue().set("dyc", user, 3, TimeUnit.MILLISECONDS);
         User u = (User) redisTemplate.opsForValue().get("dyc");
 
         //释放锁
